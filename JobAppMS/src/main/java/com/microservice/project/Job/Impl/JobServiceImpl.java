@@ -1,4 +1,4 @@
-package com.microservice.project.Impl;
+package com.microservice.project.Job.Impl;
 
 
 import com.microservice.project.Job.Job;
@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -41,35 +42,31 @@ public class JobServiceImpl implements JobService
       }
 
     @Override
-    public boolean deleteJobById(Long id) {
-        Iterator<Job> iterator = jobs.iterator();
-        while(iterator.hasNext())
-        {
-            Job job = iterator.next();
-            if(job.getId().equals(id))
-            {
-                iterator.remove();
-                return true;
-            }
+    public boolean deleteJobById(Long id)
+    {
+        try {
+            jobRepository.deleteById(id);
+            return true;
         }
-        return false;
+        catch (Exception e) {
+            return false;
+        }
     }
 
     @Override
-    public boolean updateJob(Long id, Job updatedJob) {
-        for(Job job: jobs)
-        {
-            if(job.getId().equals(id))
-            {
-                job.setTitle(updatedJob.getTitle());
-                job.setDescription(updatedJob.getDescription());
-                job.setMinSalary(updatedJob.getMinSalary());
-                job.setMaxSalary(updatedJob.getMaxSalary());
-                job.setLocation(updatedJob.getLocation());
-                return true;
-            }
+    public boolean updateJob(Long id, Job updatedJob)
+    {
+        Optional<Job> jobOptional = jobRepository.findById(id);
+        if(jobOptional.isPresent()) {
+            Job job = jobOptional.get();
+            job.setTitle(updatedJob.getTitle());
+            job.setDescription(updatedJob.getDescription());
+            job.setMinSalary(updatedJob.getMinSalary());
+            job.setMaxSalary(updatedJob.getMaxSalary());
+            job.setLocation(updatedJob.getLocation());
+            jobRepository.save(job);
+            return true;
         }
-
         return false;
     }
 

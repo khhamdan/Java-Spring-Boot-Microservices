@@ -1,6 +1,9 @@
 package com.microservice.project.Job;
 
+import com.microservice.project.Company.Company;
 import jakarta.persistence.*;
+
+import java.util.List;
 
 @Entity
 @Table(name = "job_table")
@@ -14,6 +17,9 @@ public class Job
     private String minSalary;
     private String maxSalary;
     private String location;
+
+    @ManyToOne
+    private Company company;
 
     public Job() {
     }
@@ -73,5 +79,13 @@ public class Job
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public Company getCompany() {
+        return company;
+    }
+
+    public void setCompany(Company company) {
+        this.company = company;
     }
 }
