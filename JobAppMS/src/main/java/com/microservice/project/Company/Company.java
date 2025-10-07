@@ -3,6 +3,7 @@ package com.microservice.project.Company;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.microservice.project.Job.Job;
+import com.microservice.project.Review.Review;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -19,6 +20,18 @@ public class Company
     @JsonIgnore
     @OneToMany(mappedBy = "company")
     private List<Job> jobs;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "company")
+    private List<Review> reviews;
+
+    public List<Review> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(List<Review> reviews) {
+        this.reviews = reviews;
+    }
 
     public Company() {
     }
