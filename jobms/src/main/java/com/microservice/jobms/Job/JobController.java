@@ -1,8 +1,10 @@
 package com.microservice.jobms.Job;
 
+import com.microservice.jobms.Job.external.Company;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
@@ -19,7 +21,12 @@ public class JobController
     }
 
     @GetMapping
-    private ResponseEntity<List<Job>> findAll(){
+    public ResponseEntity<List<Job>> findAll(){
+        RestTemplate restTemplate = new RestTemplate();
+        Company company = restTemplate.getForObject("http://localhost:8081/companies/1", Company.class);
+//        converting url response to this class
+        System.out.println("Company:" + company.getName());
+        System.out.println("Company:" + company.getId());
         return ResponseEntity.ok(jobService.findAll());
     }
 

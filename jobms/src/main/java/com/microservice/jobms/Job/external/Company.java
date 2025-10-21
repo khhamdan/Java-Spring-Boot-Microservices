@@ -1,26 +1,12 @@
-package com.microservice.companyms.Company;
-
+package com.microservice.jobms.Job.external;
 
 import jakarta.persistence.*;
 
-
-@Entity
 public class Company
 {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
     private String description;
-
-    public Company() {
-    }
-
-    public Company(Long id, String name, String description) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-    }
 
     public Long getId() {
         return id;

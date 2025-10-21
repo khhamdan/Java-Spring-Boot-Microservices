@@ -53,9 +53,9 @@ public class CompanyController
     {
         Company company = companyService.getCompanyById(id);
         if(company == null){
-            return new ResponseEntity<>(company, HttpStatus.OK);
+            return new ResponseEntity<>(company, HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(company, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(company, HttpStatus.OK);
     }
 
 }
