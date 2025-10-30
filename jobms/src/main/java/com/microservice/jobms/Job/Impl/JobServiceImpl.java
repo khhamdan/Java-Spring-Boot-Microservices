@@ -4,12 +4,16 @@ package com.microservice.jobms.Job.Impl;
 import com.microservice.jobms.Job.Job;
 import com.microservice.jobms.Job.JobRepository;
 import com.microservice.jobms.Job.JobService;
+import com.microservice.jobms.Job.dto.JobWithCompanyDTO;
+import com.microservice.jobms.Job.external.Company;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -26,9 +30,23 @@ public class JobServiceImpl implements JobService
 //    private List<Job> jobs = new ArrayList<>();
 
     @Override
-    public List<Job> findAll()
+    public List<JobWithCompanyDTO> findAll() {
+        List<Job> jobs = jobRepository.findAll();
+        List<JobWithCompanyDTO> jobWithCompanyDTOList = new ArrayList<>();
+
+        return jobs.stream().map(this::convertToDto).collect(Collectors.toList());
+    }
+
+    private JobWithCompanyDTO convertToDto(Job job)
     {
-        return jobRepository.findAll();
+            JobWithCompanyDTO jobWithCompanyDTO = new JobWithCompanyDTO();
+            jobWithCompanyDTO.setJob(job);
+            RestTemplate restTemplate = new RestTemplate();
+
+            Company company = restTemplate.getForObject("http://localhost:8081/companies/" + job.getCompanyId() , Company.class);
+
+            jobWithCompanyDTO.setCompany(company);
+            return jobWithCompanyDTO;
     }
 
     @Override

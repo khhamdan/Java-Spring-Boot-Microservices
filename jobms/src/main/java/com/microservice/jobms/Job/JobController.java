@@ -1,5 +1,6 @@
 package com.microservice.jobms.Job;
 
+import com.microservice.jobms.Job.dto.JobWithCompanyDTO;
 import com.microservice.jobms.Job.external.Company;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,12 +22,7 @@ public class JobController
     }
 
     @GetMapping
-    public ResponseEntity<List<Job>> findAll(){
-        RestTemplate restTemplate = new RestTemplate();
-        Company company = restTemplate.getForObject("http://localhost:8081/companies/1", Company.class);
-//        converting url response to this class
-        System.out.println("Company:" + company.getName());
-        System.out.println("Company:" + company.getId());
+    public ResponseEntity<List<JobWithCompanyDTO>> findAll(){
         return ResponseEntity.ok(jobService.findAll());
     }
 
