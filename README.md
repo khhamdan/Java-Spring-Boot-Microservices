@@ -5,3 +5,6 @@ Tested with H2 database
 Spring Actuators
 Implemented Docker using command
 ./mvnw spring-boot:build-image "-Dspring-boot.build-image.imageName=username/imagename"
+Microservices of Job, Review and Company implemented
+Rest Template used with Load Balancing
+Service Registry used.
