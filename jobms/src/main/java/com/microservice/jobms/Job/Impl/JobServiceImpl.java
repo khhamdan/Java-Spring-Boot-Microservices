@@ -4,6 +4,8 @@ package com.microservice.jobms.Job.Impl;
 import com.microservice.jobms.Job.Job;
 import com.microservice.jobms.Job.JobRepository;
 import com.microservice.jobms.Job.JobService;
+import com.microservice.jobms.Job.clients.CompanyClient;
+import com.microservice.jobms.Job.clients.ReviewClient;
 import com.microservice.jobms.Job.dto.JobDTO;
 import com.microservice.jobms.Job.external.Company;
 import com.microservice.jobms.Job.external.Review;
@@ -34,9 +36,13 @@ public class JobServiceImpl implements JobService
     @Autowired
     RestTemplate restTemplate;
 
+    private CompanyClient companyClient;
+    private ReviewClient reviewClient;
 
-    public JobServiceImpl(JobRepository jobRepository) {
+    public JobServiceImpl(JobRepository jobRepository, CompanyClient companyClient,ReviewClient reviewClient) {
         this.jobRepository = jobRepository;
+        this.companyClient = companyClient;
+        this.reviewClient = reviewClient;
     }
 
 //    private List<Job> jobs = new ArrayList<>();
@@ -51,17 +57,9 @@ public class JobServiceImpl implements JobService
 
     private JobDTO convertToDto(Job job)
     {
-//        getforobject is for single object
-        Company company = restTemplate.getForObject(
-                    "http://COMPANY-SERVICE:8081/companies/" + job.getCompanyId() , Company.class);
-//      exchange is for list
-        ResponseEntity<List<Review>> responseEntity = restTemplate.exchange("http://REVIEW-SERVICE:8083/reviews?companyId=" + job.getCompanyId(),
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<List<Review>>() {
-        });
+        Company company = companyClient.getCompany(job.getCompanyId());
 
-        List<Review> reviews = responseEntity.getBody();
+        List<Review> reviews = reviewClient.getReviews(job.getCompanyId());
 
         JobDTO jobDTO = JobMapper.mapJobToJobWithCompanyDTO(job, company, reviews);
 
