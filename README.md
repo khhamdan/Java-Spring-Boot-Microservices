@@ -1,5 +1,6 @@
 # Java-Spring-Boot-Microservices
-This repository is implemention of microservices and added 
+
+This repository is implemention of microservices and added
 Implemented Job application with CRUD with relationship between job, company and reviews
 Tested with H2 database
 Spring Actuators
@@ -8,3 +9,4 @@ Implemented Docker using command
 Microservices of Job, Review and Company implemented
 Rest Template used with Load Balancing
 Service Registry used.
+Open Feign used

@@ -29,8 +29,9 @@ public class JobController
     private ResponseEntity<JobDTO> findAll(@PathVariable Long id){
         JobDTO jobDTO = jobService.getJobById(id);
         if(jobDTO == null)
-            return new ResponseEntity<>(jobDTO, HttpStatus.OK);
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(jobDTO, HttpStatus.OK);
+
     }
 
     @PostMapping

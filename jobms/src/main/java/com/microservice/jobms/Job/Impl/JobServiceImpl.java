@@ -63,7 +63,7 @@ public class JobServiceImpl implements JobService
 
         JobDTO jobDTO = JobMapper.mapJobToJobWithCompanyDTO(job, company, reviews);
 
-            return jobDTO;
+        return jobDTO;
     }
 
     @Override

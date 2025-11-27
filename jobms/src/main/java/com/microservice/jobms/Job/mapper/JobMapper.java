@@ -21,7 +21,6 @@ public class JobMapper
         jobDTO.setCompany(company);
         jobDTO.setReviews(reviews);
 
-
         return jobDTO;
     }
 }
