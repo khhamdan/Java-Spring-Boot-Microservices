@@ -10,6 +10,8 @@ import com.microservice.jobms.Job.dto.JobDTO;
 import com.microservice.jobms.Job.external.Company;
 import com.microservice.jobms.Job.external.Review;
 import com.microservice.jobms.Job.mapper.JobMapper;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 import org.apache.http.client.methods.HttpGet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
@@ -31,14 +33,13 @@ public class JobServiceImpl implements JobService
 {
     private final JobRepository jobRepository;
 
-    JobRepository JobRepository;
-
     @Autowired
     RestTemplate restTemplate;
 
     private CompanyClient companyClient;
     private ReviewClient reviewClient;
 
+    int attempts = 0;
     public JobServiceImpl(JobRepository jobRepository, CompanyClient companyClient,ReviewClient reviewClient) {
         this.jobRepository = jobRepository;
         this.companyClient = companyClient;
@@ -48,23 +49,32 @@ public class JobServiceImpl implements JobService
 //    private List<Job> jobs = new ArrayList<>();
 
     @Override
-    public List<JobDTO> findAll() {
+//    @CircuitBreaker(name="companyBreaker", fallbackMethod = "companyBreakerFallback")
+    @Retry(name="companyBreaker", fallbackMethod = "companyBreakerFallback")
+    public List<JobDTO> findAll()
+    {
+        System.out.println("Attempts:" + ++attempts);
         List<Job> jobs = jobRepository.findAll();
         List<JobDTO> jobDTOList = new ArrayList<>();
-
         return jobs.stream().map(this::convertToDto).collect(Collectors.toList());
+    }
+
+    public List<String> companyBreakerFallback(Exception e)
+    {
+        List<String> list = new ArrayList<>();
+        list.add("Dummy");
+        return list;
     }
 
     private JobDTO convertToDto(Job job)
     {
         Company company = companyClient.getCompany(job.getCompanyId());
-
         List<Review> reviews = reviewClient.getReviews(job.getCompanyId());
-
         JobDTO jobDTO = JobMapper.mapJobToJobWithCompanyDTO(job, company, reviews);
-
         return jobDTO;
     }
+
+
 
     @Override
     public void createJob(Job job) {
