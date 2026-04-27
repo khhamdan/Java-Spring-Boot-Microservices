@@ -11,6 +11,7 @@ import com.microservice.jobms.Job.external.Company;
 import com.microservice.jobms.Job.external.Review;
 import com.microservice.jobms.Job.mapper.JobMapper;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import io.github.resilience4j.retry.annotation.Retry;
 import org.apache.http.client.methods.HttpGet;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +51,8 @@ public class JobServiceImpl implements JobService
 
     @Override
 //    @CircuitBreaker(name="companyBreaker", fallbackMethod = "companyBreakerFallback")
-    @Retry(name="companyBreaker", fallbackMethod = "companyBreakerFallback")
+//    @Retry(name="companyBreaker", fallbackMethod = "companyBreakerFallback")
+    @RateLimiter(name="companyBreaker", fallbackMethod = "companyBreakerFallback")
     public List<JobDTO> findAll()
     {
         System.out.println("Attempts:" + ++attempts);
@@ -81,11 +83,14 @@ public class JobServiceImpl implements JobService
         jobRepository.save(job);
       }
 
-      @Override
+    @Override
     public JobDTO getJobById(Long id) {
-         Job job = jobRepository.findById(id).orElse(null);
-          return convertToDto(job);
+        Job job = jobRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Job not found with id: " + id));
+
+        return convertToDto(job);
     }
+
 
     @Override
     public boolean deleteJobById(Long id)
